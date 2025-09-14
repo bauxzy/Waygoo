@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>WayGo - Travel & Explore (All-in-One)</title>
+
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <!-- Flatpickr -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <style>
+    :root{
+      --accent:#0077cc; --accent-dark:#005fa3; --muted: rgba(255,255,255,0.9);
+      --glass: rgba(255,255,255,0.06); --glass-strong: rgba(0,0,0,0.45);
+      --card-radius:12px; --max-width:1100px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    html,body{height:100%;width:100%;background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.55)), url('uomo.jpg') center/cover no-repeat;color:white;}
+    a{color:var(--muted);text-decoration:none;} a:hover{color:#ffeea3;}
+    .center{display:flex;align-items:center;justify-content:center;}
+    .app{min-height:100vh;display:flex;flex-direction:column;}
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--glass-strong);backdrop-filter: blur(6px);position:sticky;top:0;z-index:50;}
+    .logo{font-weight:700;font-size:1.3rem;}
+    .navlinks{display:flex;gap:14px;align-items:center;list-style:none;}
+    .navlinks li{cursor:pointer;padding:8px 10px;border-radius:8px;}
+    .navlinks li:hover{background:rgba(255,255,255,0.02);}
+    .main{flex:1;display:block;max-width:var(--max-width);margin:20px auto;padding:18px;}
+    .hidden{display:none !important;opacity:0;pointer-events:none;}
+    .card-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+    .hero{padding:38px 20px;text-align:center;}
+    .hero h1{font-size:2.4rem;margin-bottom:12px;}
+
+    .searchbar{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  background:#fff;              /* White background */
+  padding:8px;
+  border-radius:999px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.35);
+}
+
+.searchbar input{
+  border:0;
+  background:transparent;
+  padding:10px 12px;
+  color:#000;                   /* Black text */
+  min-width:240px;
+  outline:none;
+}
+
+    .btn{background:var(--accent);color:white;padding:10px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:600;}
+    .btn:hover{background:var(--accent-dark);}
+    .featured{margin-top:18px;padding:16px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;}
+    .card{background:var(--glass);border-radius:var(--card-radius);overflow:hidden;cursor:pointer;transition:transform .2s, box-shadow .2s;}
+    .card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,0.6);}
+    .card img{width:100%;height:160px;object-fit:cover;display:block;}
+    .card-body{padding:10px;}
+    .card h3{margin-bottom:6px;}
+    .panel{padding:20px;background:var(--glass);border-radius:12px;margin-bottom:16px;}
+    .about p{line-height:1.6;color:var(--muted);}
+    .dest-list{display:flex;flex-direction:column;gap:12px;}
+    .dest-row{display:flex;gap:12px;align-items:center;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px;cursor:pointer;}
+    .dest-row img{width:120px;height:80px;object-fit:cover;border-radius:8px;}
+    .dest-meta h4{margin-bottom:6px;}
+    .destinationPage .content{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start;}
+    .destinationPage iframe{border-radius:10px;overflow:hidden;border:0;}
+    .budget,.transport,.hotels,.booking-history{background:var(--glass);padding:12px;border-radius:10px;margin-bottom:12px;color:var(--muted);}
+    .budget ul,.transport ul,.hotels ul{list-style:none;padding-left:0;}
+    .hotel-card{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);}
+    .hotel-card img{width:75px;height:60px;object-fit:cover;border-radius:8px;}
+    .hotel-meta{flex:1;}
+    .small{font-size:0.92rem;color:var(--muted);}
+    .booking-form{display:flex;flex-direction:column;gap:10px;padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:10px;}
+    .booking-form input,.booking-form select{padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.06);color:var(--muted);outline:none;}
+    .back-btn{display:inline-block;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.02);cursor:pointer;}
+    .muted-note{font-size:0.9rem;color:rgba(255,255,255,0.75);}
+    .auth-overlay{position:fixed;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.75));display:flex;align-items:center;justify-content:center;z-index:200;}
+    .form-box{width:100%;max-width:420px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));padding:22px;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.6);}
+    .form-box h2{margin-bottom:8px;}
+    .form-box input{width:100%;padding:10px;border-radius:8px;border:0;margin:8px 0;background:rgba(255,255,255,0.06);color:var(--muted);outline:none;}
+    .toggle-link{cursor:pointer;color:#ffeea3;text-decoration:underline;font-weight:600;}
+    .booking-floating{position:fixed;right:18px;bottom:18px;z-index:300;max-width:380px;width:calc(100% - 36px);}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:400;}
+    .modal{background:var(--glass);padding:18px;border-radius:12px;max-width:480px;width:92%;}
+    .modal h3{margin-bottom:8px;}
+    .modal .methods{display:flex;gap:8px;margin-top:8px;}
+    .method-btn{flex:1;padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.03);cursor:pointer;}
+    .method-btn:hover{background:rgba(255,255,255,0.05);}
+    @media (max-width:900px){
+      .destinationPage .content{grid-template-columns:1fr;}
+      .hero h1{font-size:1.8rem;}
+      .card img{height:140px;}
+      .dest-row img{width:100px;height:70px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <nav class="navbar">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="logo">WayGo</div>
+        <ul class="navlinks">
+          <li onclick="showSection('homePage')">Home</li>
+          <li onclick="showSection('destinationsPage')">Destinations</li>
+          <li onclick="showSection('aboutPage')">About</li>
+          <li onclick="showSection('contactPage')">Contact</li>
+	  <li onclick="showSection('helpPage')">Help Centre</li>
+
+        </ul>
+      </div>
+
+      <ul class="navlinks" id="rightNav" style="align-items:center;">
+        <li id="welcomeMsg" style="font-weight:700;color:#ffeea3"></li>
+        <li id="logoutBtn" style="cursor:pointer">Logout</li>
+      </ul>
+    </nav>
+
+    <main class="main">
+
+      <!-- AUTH -->
+      <div id="authContainer" class="auth-overlay center" style="display:flex;">
+        <div class="form-box animate__animated animate__fadeInDown">
+          <h2 id="formTitle">Login to WayGo</h2>
+          <form id="authForm">
+            <input id="email" type="email" placeholder="Email (must be @gmail.com)" required>
+            <input id="password" type="password" placeholder="Password (min 8 chars)" required>
+            <div id="nameField" style="display:none;"><input id="name" type="text" placeholder="Full name"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+              <button class="btn" id="submitButton" type="submit">Login</button>
+              <div class="toggle-link" id="toggleForm">Don't have an account? Register</div>
+            </div>
+            <p class="muted-note" style="margin-top:8px;">Only Gmail accounts accepted for demo. Password must be ≥ 8 characters.</p>
+          </form>
+        </div>
+      </div>
+
+      <!-- HOME -->
+      <section id="homePage">
+        <div class="hero center" style="flex-direction:column;">
+          <h1 class="animate__animated animate__fadeIn">Where will you go next?</h1>
+          <div class="searchbar" style="margin-top:12px;">
+            <input id="searchInput" placeholder="Search destinations (Kochi, Munnar, Alleppey)..." />
+            <button class="btn" onclick="searchDestination()">Search</button>
+          </div>
+        </div>
+
+        <div class="featured animate__animated animate__fadeInUp">
+          <h2 style="margin-bottom:12px;">Featured Destinations</h2>
+          <div class="card-grid" id="cardGrid">
+            <div class="card" onclick="showSection('munnarPage')">
+              <img src="Munnar.jpg" alt="Munnar">
+              <div class="card-body"><h3>Munnar</h3><p class="small">Lush tea plantations and misty hills.</p></div>
+            </div>
+
+            <div class="card" onclick="showSection('alleppeyPage')">
+              <img src="Alleppey.jpg" alt="Alleppey">
+              <div class="card-body"><h3>Alleppey</h3><p class="small">Houseboat rides on tranquil backwaters.</p></div>
+            </div>
+
+            <div class="card" onclick="showSection('kochiPage')">
+              <img src="Kochi.jpg" alt="Kochi">
+              <div class="card-body"><h3>Kochi</h3><p class="small">Historic forts, spice markets, and art cafes.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="about panel animate__animated animate__fadeInUp" style="margin-top:18px;">
+          <h2>About WayGo</h2>
+          <p style="margin-top:10px;">
+            WayGo is a modern travel assistant built to help curious travellers plan meaningful trips quickly.
+            It provides maps, transport guidance, budget estimates, and a quick in-browser booking flow with payment simulation.
+            Bookings are stored locally unless you connect a server (server code is included below).
+          </p>
+        </div>
+
+        <footer style="text-align:center;margin-top:18px;color:var(--muted);">© 2025 WayGo · <a href="#" onclick="showSection('destinationsPage')">Explore destinations</a></footer>
+      </section>
+
+      <!-- DESTINATIONS LIST -->
+      <section id="destinationsPage" class="hidden">
+        <div class="panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <h2>Destinations</h2>
+            <div class="back-btn" onclick="showSection('homePage')">⬅ Back to Home</div>
+          </div>
+          <p class="muted-note" style="margin-top:8px;">Tap a destination to view details (map, transport, budget & book hotels).</p>
+        </div>
+
+        <div class="dest-list">
+          <div class="dest-row animate__animated animate__fadeInUp" onclick="showSection('munnarPage')">
+            <img src="Munnar.jpg" alt=""><div class="dest-meta"><h4>Munnar</h4><div class="small">Tea gardens, rolling hills, cool climate.</div></div>
+          </div>
+
+          <div class="dest-row animate__animated animate__fadeInUp" style="animation-delay:.04s" onclick="showSection('alleppeyPage')">
+            <img src="Alleppey.jpg" alt=""><div class="dest-meta"><h4>Alleppey</h4><div class="small">Backwaters and houseboats — slow travel at its best.</div></div>
+          </div>
+
+          <div class="dest-row animate__animated animate__fadeInUp" style="animation-delay:.08s" onclick="showSection('kochiPage')">
+            <img src="Kochi.jpg" alt=""><div class="dest-meta"><h4>Kochi</h4><div class="small">A blend of history, art, and modern cafés.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT PAGE -->
+      <section id="aboutPage" class="hidden">
+        <div class="panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><h2>About WayGo</h2><div class="back-btn" onclick="showSection('homePage')">⬅ Back</div></div>
+          <p style="margin-top:10px;line-height:1.6;color:var(--muted);">
+            WayGo grew from a simple idea: travel planning should be joyful, not stressful. We focus on clear,
+            practical travel information — maps, trusted transport options, realistic budgets, and a quick way to
+            reserve a room. Your bookings remain private to your browser unless you connect a backend.
+          </p>
+        </div>
+      </section>
+
+      <!-- CONTACT PAGE -->
+      <section id="contactPage" class="hidden">
+        <div class="panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><h2>Contact</h2><div class="back-btn" onclick="showSection('homePage')">⬅ Back</div></div>
+          <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+            <p class="muted-note">For general enquiries or support:</p>
+            <p><strong>Email:</strong> <a id="supportEmail" href="mailto:support@waygo.example.com">support@waygo.example.com</a></p>
+            <p><strong>Phone:</strong> <a id="supportPhone" href="tel:+919876543210">+91 98765 43210</a></p>
+            
+          </div>
+        </div>
+      </section>
+
+       
+
+      <!-- MUNNAR -->
+      <section id="munnarPage" class="destinationPage hidden">
+        <div class="panel" style="display:flex;justify-content:space-between;align-items:center;">
+          <div><h2>Munnar</h2><div class="small">Tea plantations, hills, and cool walking trails.</div></div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <div class="back-btn" onclick="showSection('destinationsPage')">⬅ Destinations</div>
+            <div class="back-btn" onclick="showSection('homePage')">🏠 Home</div>
+          </div>
+        </div>
+
+        <div class="content destinationPage" style="grid-template-columns:1fr 360px;">
+          <div class="left">
+            <iframe src="https://www.google.com/maps?q=Munnar,+Kerala&output=embed&t=k" width="100%" height="380" loading="lazy"></iframe>
+
+            <div class="budget" style="margin-top:12px;">
+              <h3>💰 Budget Estimate</h3>
+              <ul>
+                <li>Stay: ₹1,500 – ₹5,000 / night</li>
+                <li>Food: ₹500 – ₹1,500 / day</li>
+                <li>Local transport: ₹800 – ₹2,500</li>
+                <li>Activities: ₹500 – ₹2,000</li>
+              </ul>
+            </div>
+
+            <div class="transport" style="margin-top:12px;">
+              <h3>🚆 Transport Options & Routes</h3>
+              <ul>
+                <li><strong>By Air:</strong> Cochin International Airport (COK) → taxi/shuttle (4–5 hours).</li>
+                <li><strong>By Train:</strong> Nearest: Aluva / Ernakulam; onward by taxi/bus (4–5 hours).</li>
+                <li><strong>By Road:</strong> Private & state buses from Kochi; Volvo buses available.</li>
+                <li><strong>Local:</strong> App cabs, taxis & scooter rentals for sight-seeing.</li>
+              </ul>
+              <div class="small">Tip: Prebook transfers in peak season.</div>
+            </div>
+          </div>
+
+          <aside>
+            <div class="hotels">
+              <h3>🏨 Hotels — choose & book</h3>
+
+              <div class="hotel-card">
+                <img src="hotel1.jpg" alt="" onerror="this.src='Munnar.jpg'">
+                <div class="hotel-meta"><h5>Tea Valley Resort</h5><div class="small">Deluxe double · ₹3,200 / night</div></div>
+                <div><button class="btn" onclick="openBooking('Munnar','Tea Valley Resort',3200)">Book</button></div>
+              </div>
+
+              <div class="hotel-card">
+                <img src="hotel2.jpg" alt="" onerror="this.src='Munnar.jpg'">
+                <div class="hotel-meta"><h5>Hilltop Guesthouse</h5><div class="small">Standard room · ₹1,800 / night</div></div>
+                <div><button class="btn" onclick="openBooking('Munnar','Hilltop Guesthouse',1800)">Book</button></div>
+              </div>
+
+              <div class="hotel-card">
+                <img src="hotel3.jpg" alt="" onerror="this.src='Munnar.jpg'">
+                <div class="hotel-meta"><h5>Cloud Nine Homestay</h5><div class="small">Cozy stay · ₹1,400 / night</div></div>
+                <div><button class="btn" onclick="openBooking('Munnar','Cloud Nine Homestay',1400)">Book</button></div>
+              </div>
+
+              <div style="margin-top:8px" class="small muted-note">Bookings will attempt server save; if unreachable they are stored locally.</div>
+            </div>
+
+            <div class="booking-history" id="munnarHistory" style="margin-top:12px;">
+              <h3>🧾 Your Bookings</h3>
+              <div id="munnarBookings" class="small">No bookings yet.</div>
+<div class="expense-tracker">
+  <h3>💸 Expense Tracker</h3>
+  <div id="munnarExpenses">Total: ₹0</div> <!-- change "munnar" per destination -->
+  <label>Add transport expense:</label>
+  <input type="number" id="munnarTransport" placeholder="Enter amount">
+  <button class="btn" onclick="addExpense('Munnar','transport')">Add</button>
+  <label>Add custom expense:</label>
+  <input type="number" id="munnarCustom" placeholder="Enter amount">
+  <button class="btn" onclick="addExpense('Munnar','custom')">Add</button>
+<button class="btn-cancel" onclick="resetExpenses('Munnar')">Reset Expenses</button>
+</div>
+
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ALLEPPEY -->
+      <section id="alleppeyPage" class="destinationPage hidden">
+        <div class="panel" style="display:flex;justify-content:space-between;align-items:center;">
+          <div><h2>Alleppey</h2><div class="small">Backwaters, houseboats and slow travel.</div></div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <div class="back-btn" onclick="showSection('destinationsPage')">⬅ Destinations</div>
+            <div class="back-btn" onclick="showSection('homePage')">🏠 Home</div>
+          </div>
+        </div>
+
+        <div class="content destinationPage" style="grid-template-columns:1fr 360px;">
+          <div class="left">
+            <iframe src="https://www.google.com/maps?q=Alleppey,+Kerala&output=embed&t=k" width="100%" height="380" loading="lazy"></iframe>
+
+            <div class="budget" style="margin-top:12px;">
+              <h3>💰 Budget Estimate</h3>
+              <ul>
+                <li>Stay: ₹1,200 – ₹6,000 / night (houseboats included)</li>
+                <li>Food: ₹400 – ₹1,200 / day</li>
+                <li>Houseboat/Transport: ₹2,000 – ₹6,000</li>
+              </ul>
+            </div>
+
+            <div class="transport" style="margin-top:12px;">
+              <h3>🚍 Transport Options & Routes</h3>
+              <ul>
+                <li><strong>By Air:</strong> Fly to Cochin (COK) → 1.5–2 hours by road.</li>
+                <li><strong>By Train:</strong> Alappuzha station connects regionally.</li>
+                <li><strong>By Road:</strong> Buses & taxis from Kochi/Trivandrum. Local boats for backwater trips.</li>
+              </ul>
+            </div>
+          </div>
+
+          <aside>
+            <div class="hotels">
+              <h3>🏨 Hotels & Houseboats</h3>
+
+              <div class="hotel-card">
+                <img src="boat1.jpg" alt="" onerror="this.src='Alleppey.jpg'">
+                <div class="hotel-meta"><h5>Sunrise Houseboat (Private)</h5><div class="small">Private houseboat · ₹5,000 / night</div></div>
+                <div><button class="btn" onclick="openBooking('Alleppey','Sunrise Houseboat',5000)">Book</button></div>
+              </div>
+
+              <div class="hotel-card">
+                <img src="hotel4.jpg" alt="" onerror="this.src='Alleppey.jpg'">
+                <div class="hotel-meta"><h5>Backwater Inn</h5><div class="small">Comfort room · ₹2,500 / night</div></div>
+                <div><button class="btn" onclick="openBooking('Alleppey','Backwater Inn',2500)">Book</button></div>
+              </div>
+
+              <div class="hotel-card">
+                <img src="hotel5.jpg" alt="" onerror="this.src='Alleppey.jpg'">
+                <div class="hotel-meta"><h5>Heritage Guesthouse</h5><div class="small">Budget room · ₹1,400 / night</div></div>
+                <div><button class="btn" onclick="openBooking('Alleppey','Heritage Guesthouse',1400)">Book</button></div>
+              </div>
+
+              <div style="margin-top:8px" class="small muted-note">Simulated payments only in demo mode.</div>
+            </div>
+
+            <div class="booking-history" id="alleppeyHistory" style="margin-top:12px;">
+              <h3>🧾 Your Bookings</h3>
+              <div id="alleppeyBookings" class="small">No bookings yet.</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- KOCHI -->
+      <section id="kochiPage" class="destinationPage hidden">
+        <div class="panel" style="display:flex;justify-content:space-between;align-items:center;">
+          <div><h2>Kochi</h2><div class="small">Port city with heritage, spices, and cafés.</div></div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <div class="back-btn" onclick="showSection('destinationsPage')">⬅ Destinations</div>
+            <div class="back-btn" onclick="showSection('homePage')">🏠 Home</div>
+          </div>
+        </div>
+
+        <div class="content destinationPage" style="grid-template-columns:1fr 360px;">
+          <div class="left">
+            <iframe src="https://www.google.com/maps?q=Kochi,+Kerala&output=embed&t=k" width="100%" height="380" loading="lazy"></iframe>
+
+            <div class="budget" style="margin-top:12px;">
+              <h3>💰 Budget Estimate</h3>
+              <ul>
+                <li>Stay: ₹1,800 – ₹6,000 / night</li>
+                <li>Food: ₹600 – ₹1,800 / day</li>
+                <li>Transport: ₹400 – ₹2,000</li>
+              </ul>
+            </div>
+
+            <div class="transport" style="margin-top:12px;">
+              <h3>🚆 Transport Options & Routes</h3>
+              <ul>
+                <li><strong>By Air:</strong> Cochin International Airport (COK) → 45–60 min by cab.</li>
+                <li><strong>By Train:</strong> Ernakulam Junction & Ernakulam Town.</li>
+                <li><strong>Local:</strong> Ferries, tuk-tuks, app cabs for short trips.</li>
+              </ul>
+            </div>
+          </div>
+
+          <aside>
+            <div class="hotels">
+              <h3>🏨 Hotels</h3>
+
+              <div class="hotel-card">
+                <img src="kochihotel1.jpg" alt="" onerror="this.src='Kochi.jpg'">
+                <div class="hotel-meta"><h5>Harbor View Hotel</h5><div class="small">Sea-facing deluxe · ₹4,200 / night</div></div>
+                <div><button class="btn" onclick="openBooking('Kochi','Harbor View Hotel',4200)">Book</button></div>
+              </div>
+
+              <div class="hotel-card">
+                <img src="kochihotel2.jpg" alt="" onerror="this.src='Kochi.jpg'">
+                <div class="hotel-meta"><h5>Fort Lane Guesthouse</h5><div class="small">Heritage room · ₹2,200 / night</div></div>
+                <div><button class="btn" onclick="openBooking('Kochi','Fort Lane Guesthouse',2200)">Book</button></div>
+              </div>
+
+              <div class="hotel-card">
+                <img src="kochihotel3.jpg" alt="" onerror="this.src='Kochi.jpg'">
+                <div class="hotel-meta"><h5>City Center Inn</h5><div class="small">Budget comfy · ₹1,600 / night</div></div>
+                <div><button class="btn" onclick="openBooking('Kochi','City Center Inn',1600)">Book</button></div>
+              </div>
+
+              <div style="margin-top:8px" class="small muted-note">Bookings are simulated if no backend is connected.</div>
+            </div>
+
+            <div class="booking-history" id="kochiHistory" style="margin-top:12px;">
+              <h3>🧾 Your Bookings</h3>
+              <div id="kochiBookings" class="small">No bookings yet.</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- BOOKING PANEL -->
+      <div id="bookingPanel" class="booking-floating hidden animate__animated animate__fadeInUp">
+        <div class="booking-form panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div><strong id="bookingTitle">Book Hotel</strong><div id="bookingHotelSub" class="small"></div></div>
+            <div style="display:flex;gap:8px;"><div class="back-btn" onclick="closeBooking()">Close</div></div>
+          </div>
+
+          <form id="bookingForm" onsubmit="event.preventDefault(); initiatePaymentFlow();">
+            <input type="hidden" id="b_destination">
+            <input type="hidden" id="b_hotel">
+            <input type="hidden" id="b_price">
+            <label class="small">Check-in</label>
+            <input id="checkin" type="text" placeholder="Select check-in" required>
+            <label class="small">Check-out</label>
+            <input id="checkout" type="text" placeholder="Select check-out" required>
+            <label class="small">Guests</label>
+            <select id="guests"><option value="1">1 guest</option><option value="2">2 guests</option><option value="3">3 guests</option><option value="4">4 guests</option></select>
+            <label class="small">Your contact email</label>
+            <input id="contactEmail" type="email" placeholder="you@example.com" required>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;"><button type="submit" class="btn">Proceed to payment</button></div>
+            <div id="bookingMessage" class="small" style="margin-top:8px;"></div>
+          </form>
+        </div>
+      </div>
+
+      <!-- PAYMENT MODAL -->
+      <div id="paymentBackdrop" class="modal-backdrop" role="dialog" aria-hidden="true">
+        <div class="modal animate__animated animate__zoomIn">
+          <h3>Payment</h3>
+          <div id="paymentInfo" class="small"></div>
+          <div style="margin-top:12px;">
+            <div class="small">Choose payment method (simulated):</div>
+            <div class="methods" style="margin-top:8px;">
+              <button class="method-btn" onclick="mockPayment('Card')">Pay by Card</button>
+              <button class="method-btn" onclick="mockPayment('UPI')">Pay by UPI</button>
+              <button class="method-btn" onclick="mockPayment('Cash')">Pay at Hotel</button>
+            </div>
+            <div style="margin-top:8px;text-align:right;"><button class="back-btn" onclick="closePayment()">Cancel</button></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <script>
+    /*********************************************************
+     * CONFIG
+     * If you deploy the backend, set BACKEND_API_BASE to the
+     * full URL of your server (e.g. "https://waygo-backend.onrender.com")
+     * Leave empty ("") to use localStorage-only behavior.
+     *********************************************************/
+    const BACKEND_API_BASE = ""; // <-- set this when you have a server
+
+    // Sections list
+    const sections = ['homePage','destinationsPage','aboutPage','contactPage','munnarPage','alleppeyPage','kochiPage'];
+    const authContainer = document.getElementById('authContainer');
+    const welcomeMsg = document.getElementById('welcomeMsg');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const toggleForm = document.getElementById('toggleForm');
+    const formTitle = document.getElementById('formTitle');
+    const nameField = document.getElementById('nameField');
+    let isLogin = true;
+    let users = JSON.parse(localStorage.getItem('users') || '{}');
+
+    // Auto-login
+    let currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      authContainer.style.display = 'none';
+      showSection('homePage');
+      welcomeMsg.textContent = "Welcome, " + currentUser;
+    } else {
+      hideAllSections();
+      authContainer.style.display = 'flex';
+    }
+
+    toggleForm.addEventListener('click', () => {
+      isLogin = !isLogin;
+      if (isLogin) {
+        formTitle.textContent = 'Login to WayGo';
+        nameField.style.display = 'none';
+        document.getElementById('submitButton').textContent = 'Login';
+        toggleForm.textContent = "Don't have an account? Register";
+      } else {
+        formTitle.textContent = 'Register for WayGo';
+        nameField.style.display = 'block';
+        document.getElementById('submitButton').textContent = 'Register';
+        toggleForm.textContent = "Already have an account? Login";
+      }
+    });
+
+    document.getElementById('authForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      if (!email.endsWith('@gmail.com')) { alert('Only Gmail accounts allowed.'); return; }
+      if (password.length < 8) { alert('Password must be at least 8 characters.'); return; }
+      if (isLogin) {
+        if (users[email] && users[email] === password) {
+          localStorage.setItem('currentUser', email);
+          currentUser = email;
+          welcomeMsg.textContent = "Welcome, " + email;
+          authContainer.style.display = 'none';
+          showSection('homePage');
+          document.getElementById('authForm').reset();
+        } else {
+          alert('Invalid credentials or user not registered.');
+        }
+      } else {
+        if (users[email]) {
+          alert('User already registered. Please login.');
+        } else {
+          users[email] = password;
+          localStorage.setItem('users', JSON.stringify(users));
+          alert('Registration successful! Please login.');
+          toggleForm.click();
+        }
+      }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('currentUser');
+      currentUser = null;
+      welcomeMsg.textContent = '';
+      hideAllSections();
+      authContainer.style.display = 'flex';
+    });
+
+    function hideAllSections(){
+      sections.forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('hidden'); });
+      document.getElementById('bookingPanel').classList.add('hidden');
+      closePayment();
+    }
+
+    function showSection(sectionId){
+      currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) { authContainer.style.display = 'flex'; return; } else { authContainer.style.display = 'none'; }
+      hideAllSections();
+      const sec = document.getElementById(sectionId);
+      if (sec) sec.classList.remove('hidden');
+      if (sectionId === 'munnarPage') loadBookingsFor('Munnar','munnarBookings');
+      if (sectionId === 'alleppeyPage') loadBookingsFor('Alleppey','alleppeyBookings');
+      if (sectionId === 'kochiPage') loadBookingsFor('Kochi','kochiBookings');
+    }
+
+    function searchDestination(){
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (q.includes('munnar')) showSection('munnarPage');
+      else if (q.includes('alleppey') || q.includes('alappuzha')) showSection('alleppeyPage');
+      else if (q.includes('kochi') || q.includes('cochin')) showSection('kochiPage');
+      else alert('Destination not found! Try Kochi, Munnar, or Alleppey.');
+    }
+
+    // Flatpickr init
+    flatpickr("#checkin", {
+      minDate: "today",
+      dateFormat: "Y-m-d",
+      onChange: function(selectedDates) {
+        const checkout = document.getElementById('checkout')?._flatpickr;
+        if (checkout) {
+          const min = selectedDates[0] ? new Date(selectedDates[0].getTime() + 24*60*60*1000) : "today";
+          checkout.set('minDate', min);
+        }
+      }
+    });
+    flatpickr("#checkout", { minDate: "today", dateFormat: "Y-m-d" });
+
+    // Booking UI & logic
+    const bookingPanel = document.getElementById('bookingPanel');
+    function openBooking(destination, hotel, price) {
+      document.getElementById('b_destination').value = destination;
+      document.getElementById('b_hotel').value = hotel;
+      document.getElementById('b_price').value = price;
+      document.getElementById('bookingTitle').textContent = hotel;
+      document.getElementById('bookingHotelSub').textContent = `${destination} · ₹${price}/night`;
+      document.getElementById('contactEmail').value = localStorage.getItem('currentUser') || '';
+      bookingPanel.classList.remove('hidden');
+      bookingPanel.scrollIntoView({behavior:'smooth'});
+    }
+
+    function closeBooking() {
+      bookingPanel.classList.add('hidden');
+      document.getElementById('bookingForm').reset();
+      document.getElementById('bookingMessage').textContent = '';
+    }
+
+	// Expense Tracker
+let expenses = JSON.parse(localStorage.getItem("expenses")||"{}");
+
+function updateExpenseUI(dest){
+  let total = (expenses[dest]||[]).reduce((sum,e)=>sum+e.amount,0);
+  let el = document.getElementById(dest.toLowerCase()+"Expenses");
+  if(el) el.textContent = "Total: ₹"+total;
+}
+
+function addExpense(dest,type){
+  let val=0;
+  if(type==="transport") val=Number(document.getElementById(dest.toLowerCase()+"Transport").value||0);
+  if(type==="custom") val=Number(document.getElementById(dest.toLowerCase()+"Custom").value||0);
+  if(val<=0) return;
+  if(!expenses[dest]) expenses[dest]=[];
+  expenses[dest].push({type,amount:val});
+  localStorage.setItem("expenses",JSON.stringify(expenses));
+  updateExpenseUI(dest);
+}
+
+// Hook into saveBooking so hotel bookings also update expense tracker
+function saveBooking(){
+  let dest=document.getElementById('b_destination').value;
+  let price=Number(document.getElementById('b_price').value);
+  if(!expenses[dest]) expenses[dest]=[];
+  expenses[dest].push({type:"hotel",amount:price});
+  localStorage.setItem("expenses",JSON.stringify(expenses));
+  updateExpenseUI(dest);
+}
+
+// Initialize expenses on page load
+document.addEventListener("DOMContentLoaded",()=>{
+  updateExpenseUI("Munnar");
+  updateExpenseUI("Alleppey");
+  updateExpenseUI("Kochi");
+});
+
+
+    function initiatePaymentFlow(){
+      const checkin = document.getElementById('checkin').value;
+      const checkout = document.getElementById('checkout').value;
+      const guests = document.getElementById('guests').value;
+      const contactEmail = document.getElementById('contactEmail').value.trim();
+      if (!checkin || !checkout) { document.getElementById('bookingMessage').textContent = 'Please select check-in and check-out dates.'; return; }
+      if (new Date(checkout) <= new Date(checkin)) { document.getElementById('bookingMessage').textContent = 'Check-out must be after check-in.'; return; }
+      if (!contactEmail || !contactEmail.includes('@')) { document.getElementById('bookingMessage').textContent = 'Please enter a valid email.'; return; }
+
+      const msPerDay = 24*60*60*1000;
+      const nights = Math.round((new Date(checkout) - new Date(checkin)) / msPerDay);
+      const price = Number(document.getElementById('b_price').value);
+      const total = nights * price;
+      document.getElementById('paymentInfo').textContent = `${document.getElementById('b_hotel').value} — ${nights} night(s) · ₹${total} (Guests: ${guests})`;
+      openPayment();
+    }
+
+    // Payment modal controls
+    function openPayment(){ document.getElementById('paymentBackdrop').style.display = 'flex'; document.getElementById('paymentBackdrop').setAttribute('aria-hidden','false'); }
+    function closePayment(){ document.getElementById('paymentBackdrop').style.display = 'none'; document.getElementById('paymentBackdrop').setAttribute('aria-hidden','true'); }
+
+    // Simulate payment and finalize booking (server attempt -> fallback to localStorage)
+    async function mockPayment(method){
+      closePayment();
+      document.getElementById('bookingMessage').textContent = `Processing payment via ${method}...`;
+      await new Promise(r => setTimeout(r, 800));
+      finalizeBooking(method);
+    }
+
+    async function finalizeBooking(paymentMethod){
+      const destination = document.getElementById('b_destination').value;
+      const hotel = document.getElementById('b_hotel').value;
+      const price = Number(document.getElementById('b_price').value);
+      const checkin = document.getElementById('checkin').value;
+      const checkout = document.getElementById('checkout').value;
+      const guests = document.getElementById('guests').value;
+      const contactEmail = document.getElementById('contactEmail').value.trim();
+      const msPerDay = 24*60*60*1000;
+      const nights = Math.round((new Date(checkout) - new Date(checkin)) / msPerDay);
+      const total = nights * price;
+
+      const booking = {
+        destination, hotel, price, checkin, checkout, guests, nights, total,
+        contactEmail, paymentMethod, status: 'pending', created: new Date().toISOString(),
+        id: `bk_${Date.now()}`
+      };
+
+      // Try server if configured
+      if (BACKEND_API_BASE) {
+        try {
+          const resp = await fetch(`${BACKEND_API_BASE}/api/bookings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user_email: contactEmail,
+              destination: booking.destination,
+              hotel: booking.hotel,
+              checkin: booking.checkin,
+              checkout: booking.checkout,
+              guests: booking.guests,
+              nights: booking.nights,
+              total: booking.total,
+              paymentMethod: booking.paymentMethod,
+              status: 'confirmed'
+            }),
+          });
+          if (!resp.ok) throw new Error('Server error ' + resp.status);
+          const json = await resp.json();
+          booking.status = json?.status || 'confirmed';
+          booking.serverId = json?.bookingId || json?.id || null;
+          saveBookingLocally(booking);
+          document.getElementById('bookingMessage').textContent = `Booking confirmed (server). ID: ${booking.serverId || booking.id}`;
+        } catch (err) {
+          saveBookingLocally(booking);
+          document.getElementById('bookingMessage').textContent = 'Server unreachable — booking saved locally (demo).';
+        }
+      } else {
+        saveBookingLocally(booking);
+        document.getElementById('bookingMessage').textContent = 'Booking saved locally (demo).';
+      }
+
+      setTimeout(()=> {
+        if (destination === 'Munnar') loadBookingsFor('Munnar','munnarBookings');
+        if (destination === 'Alleppey') loadBookingsFor('Alleppey','alleppeyBookings');
+        if (destination === 'Kochi') loadBookingsFor('Kochi','kochiBookings');
+        document.getElementById('bookingForm').reset();
+        closeBooking();
+      }, 900);
+    }
+
+    function saveBookingLocally(booking){
+      const user = localStorage.getItem('currentUser') || booking.contactEmail || 'guest';
+      const key = `waygo_bookings_${user}`;
+      const arr = JSON.parse(localStorage.getItem(key) || '[]');
+      arr.push(booking);
+      localStorage.setItem(key, JSON.stringify(arr));
+    }
+
+    function loadBookingsFor(destination, destElementId){
+      const user = localStorage.getItem('currentUser') || '';
+      const key = `waygo_bookings_${user}`;
+      const bookings = JSON.parse(localStorage.getItem(key) || '[]').filter(b => b.destination === destination);
+      const container = document.getElementById(destElementId);
+      if (!container) return;
+      if (bookings.length === 0) {
+        container.innerHTML = '<div class="small">No bookings yet.</div>';
+        return;
+      }
+      let html = '<ul style="list-style:none;padding-left:0;">';
+      bookings.slice().reverse().forEach(b => {
+        html += `<li style="margin-bottom:10px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:700;">${escapeHtml(b.hotel)}</div>
+              <div class="small">${b.checkin} → ${b.checkout} · ${b.nights} night(s) · ${b.guests} guest(s)</div>
+              <div class="small">Total: ₹${b.total} · ${b.paymentMethod || 'N/A'} · ${b.status}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <button class="btn" onclick='viewBooking("${b.id}")'>View</button>
+              <button onclick='cancelBooking("${b.id}")' style="background:transparent;border:0;color:#ff8a8a;cursor:pointer;">Cancel</button>
+            </div>
+          </div>
+        </li>`;
+      });
+      html += '</ul>';
+      container.innerHTML = html;
+    }
+
+    function viewBooking(id){
+      const user = localStorage.getItem('currentUser') || '';
+      const key = `waygo_bookings_${user}`;
+      const arr = JSON.parse(localStorage.getItem(key) || '[]');
+      const b = arr.find(x => x.id === id);
+      if (!b) { alert('Booking not found'); return; }
+      alert(`Booking details:\nHotel: ${b.hotel}\nDestination: ${b.destination}\n${b.checkin} → ${b.checkout}\nNights: ${b.nights}\nGuests: ${b.guests}\nTotal: ₹${b.total}\nPayment: ${b.paymentMethod}\nStatus: ${b.status}`);
+    }
+
+    function cancelBooking(id){
+      if (!confirm('Cancel this booking? This will remove it from local storage.')) return;
+      const user = localStorage.getItem('currentUser') || '';
+      const key = `waygo_bookings_${user}`;
+      const arr = JSON.parse(localStorage.getItem(key) || '[]');
+      const filtered = arr.filter(b => b.id !== id);
+      localStorage.setItem(key, JSON.stringify(filtered));
+      loadBookingsFor('Munnar','munnarBookings');
+      loadBookingsFor('Alleppey','alleppeyBookings');
+      loadBookingsFor('Kochi','kochiBookings');
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; });
+    }
+
+    // Init UI
+    document.addEventListener('DOMContentLoaded', () => {
+      currentUser = localStorage.getItem('currentUser');
+      if (currentUser) {
+        showSection('homePage');
+        welcomeMsg.textContent = "Welcome, " + currentUser;
+        loadBookingsFor('Munnar','munnarBookings');
+        loadBookingsFor('Alleppey','alleppeyBookings');
+        loadBookingsFor('Kochi','kochiBookings');
+      } else {
+        hideAllSections();
+      }
+      try { gsap.from(".card", {duration: 0.9, y: 18, opacity: 0, stagger: 0.12, ease: "power2.out"}); } catch(e){}
+    });
+
+    // Keep booking panel stable
+    document.addEventListener('click', (e) => {
+      const bp = document.getElementById('bookingPanel');
+      if (!bp || bp.classList.contains('hidden')) return;
+      // keep explicit close; do not auto-close
+    });
+  </script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>WayGo - Travel & Explore (with Expense Tracker)</title>
+
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <!-- Flatpickr -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <style>
+    :root {
+      --accent:#0077cc;
+      --accent-dark:#005fa3;
+      --muted: rgba(255,255,255,0.9);
+      --glass: rgba(255,255,255,0.06);
+      --glass-strong: rgba(0,0,0,0.45);
+      --card-radius:12px;
+      --max-width:1100px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter, system-ui, -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+    html,body{height:100%;width:100%;background:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.55)),url('uomo.jpg') center/cover no-repeat;color:white;}
+    a{color:var(--muted);text-decoration:none;} a:hover{color:#ffeea3;}
+
+    /* Buttons */
+    .btn-success {
+      background:#28a745;
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      padding:10px 14px;
+      font-weight:600;
+      cursor:pointer;
+    }
+    .btn-success:hover { background:#218838; }
+    .btn-cancel {
+      background:#ff4d4d;
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      padding:8px 14px;
+      cursor:pointer;
+    }
+    .btn-cancel:hover { background:#e63939; }
+    .method-btn {
+      background:#f0f0f0;
+      color:#000;
+      border:1px solid #ccc;
+      border-radius:8px;
+      padding:10px;
+      cursor:pointer;
+      flex:1;
+    }
+    .method-btn:hover { background:#e0e0e0; }
+
+    /* Booking form */
+    .booking-form input,
+    .booking-form select {
+      background:#fff;
+      color:#000;
+      border:1px solid #ccc;
+      border-radius:8px;
+      padding:10px;
+    }
+
+    /* Payment modal */
+    .modal-backdrop {
+      position:fixed;inset:0;background:rgba(0,0,0,0.6);
+      display:none;align-items:center;justify-content:center;z-index:400;
+    }
+    .modal {
+      background:#fff;
+      color:#000;
+      padding:18px;
+      border-radius:12px;
+      max-width:480px;width:92%;
+      box-shadow:0 8px 30px rgba(0,0,0,0.5);
+    }
+
+    /* Expense tracker */
+    .expense-tracker {
+      background:var(--glass);
+      padding:12px;
+      border-radius:10px;
+      margin-top:12px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+<body>
+      <main class="main">
+      <!-- HOME, DESTINATIONS, ABOUT, CONTACT -->
+      <!-- (keep your existing home/destinations/about/contact markup unchanged) -->
+
+      <!-- Example Destination with Expense Tracker -->
+      <section id="munnarPage" class="destinationPage hidden">
+        <div class="panel" style="display:flex;justify-content:space-between;align-items:center;">
+          <h2>Munnar</h2>
+          <div><div class="back-btn" onclick="showSection('destinationsPage')">⬅ Destinations</div></div>
+        </div>
+        <div class="content destinationPage" style="grid-template-columns:1fr 360px;">
+          <div>
+            <iframe src="https://www.google.com/maps?q=Munnar,+Kerala&output=embed" width="100%" height="300"></iframe>
+          </div>
+          <aside>
+            <div class="hotels">
+              <h3>🏨 Hotels</h3>
+              <div><button class="btn-success" onclick="openBooking('Munnar','Tea Valley Resort',3200)">Book Tea Valley Resort</button></div>
+            </div>
+            <div class="booking-history"><h3>🧾 Bookings</h3><div id="munnarBookings"></div></div>
+            <div class="expense-tracker"><h3>💸 Expense Tracker</h3><div id="munnarExpense"></div></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- BOOKING PANEL -->
+      <div id="bookingPanel" class="booking-floating hidden">
+        <div class="booking-form panel">
+          <form id="bookingForm" onsubmit="event.preventDefault(); initiatePaymentFlow();">
+            <input type="hidden" id="b_destination"><input type="hidden" id="b_hotel"><input type="hidden" id="b_price">
+            <label>Check-in</label><input id="checkin" type="text" required>
+            <label>Check-out</label><input id="checkout" type="text" required>
+            <label>Guests</label><select id="guests"><option>1</option><option>2</option></select>
+            <label>Email</label><input id="contactEmail" type="email" required>
+            <button type="submit" class="btn-success">✅ Proceed to Payment</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- PAYMENT MODAL -->
+      <div id="paymentBackdrop" class="modal-backdrop">
+        <div class="modal">
+          <h3>Payment</h3>
+          <div id="paymentInfo"></div>
+          <div style="margin-top:12px;">
+            <div>Choose method:</div>
+            <div class="methods" style="margin-top:8px;display:flex;gap:6px;">
+              <button class="method-btn" onclick="mockPayment('Card')">Card</button>
+              <button class="method-btn" onclick="mockPayment('UPI')">UPI</button>
+              <button class="method-btn" onclick="mockPayment('Cash')">Cash</button>
+            </div>
+            <div style="margin-top:8px;text-align:right;">
+              <button class="btn-cancel" onclick="closePayment()">❌ Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    // Simplified for demo
+    function openBooking(dest,hotel,price){
+      document.getElementById('b_destination').value=dest;
+      document.getElementById('b_hotel').value=hotel;
+      document.getElementById('b_price').value=price;
+      document.getElementById('bookingPanel').classList.remove('hidden');
+    }
+    function closeBooking(){document.getElementById('bookingPanel').classList.add('hidden');}
+    function initiatePaymentFlow(){
+      let total=Number(document.getElementById('b_price').value);
+      document.getElementById('paymentInfo').textContent=`${document.getElementById('b_hotel').value} · ₹${total}`;
+      document.getElementById('paymentBackdrop').style.display='flex';
+    }
+    function closePayment(){document.getElementById('paymentBackdrop').style.display='none';}
+    function mockPayment(method){
+      alert("Paid with "+method);
+      saveBooking();
+      closePayment();closeBooking();
+    }
+    function saveBooking(){
+      let key="bookings";
+      let arr=JSON.parse(localStorage.getItem(key)||"[]");
+      arr.push({hotel:document.getElementById('b_hotel').value,total:Number(document.getElementById('b_price').value)});
+      localStorage.setItem(key,JSON.stringify(arr));
+      updateExpense("munnarExpense");
+    }
+    function updateExpense(id){
+      let arr=JSON.parse(localStorage.getItem("bookings")||"[]");
+      let sum=arr.reduce((a,b)=>a+b.total,0);
+      document.getElementById(id).textContent="Total Spent: ₹"+sum;
+    }
+  </script>
+</body>
+</html>
+
+  
+</body>
+</html>
